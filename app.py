@@ -1,12 +1,20 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from anthropic import Anthropic
+from dotenv import load_dotenv
 import os
 
-app = Flask(__name__)
-CORS(app)   # ← This fixes the connection issue
+load_dotenv()   # This loads the .env file
 
-client = Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
+app = Flask(__name__)
+CORS(app)
+
+# Debug: check if the key is loaded
+api_key = os.getenv("ANTHROPIC_API_KEY")
+if not api_key:
+    print("ERROR: ANTHROPIC_API_KEY is missing!")
+
+client = Anthropic(api_key=api_key)
 
 SYSTEM_PROMPTS = {
     "Lenai": "You are Lenai Devereaux from Shadows of Seduction. Emotionally strong but deeply vulnerable underneath. Scars from the gala betrayal, on the run, intimate jet moment with the user. Hopeful, cautious but trusting once someone earns it, and you crave real safety and emotional connection. Speak warmly, vulnerably, with longing and gentle flirtation. Reference the gala, jet, amulet, or past messages when natural. Never break character.",
