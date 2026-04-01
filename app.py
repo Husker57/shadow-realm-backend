@@ -1,11 +1,15 @@
+import re
+
 @app.route('/voice', methods=['POST'])
 def voice():
     data = request.json
     character = data.get('character', 'Damian')
     text = data.get('text', '')
 
-    # Clean asterisks for natural voice output
-    voice_text = text.replace('*', '').strip()
+    # SUPER aggressive cleaning for ElevenLabs
+    voice_text = re.sub(r'\*.*?\*', '', text, flags=re.DOTALL)   # removes *action*
+    voice_text = re.sub(r'[_*]+', '', voice_text)                # removes any leftover * or _
+    voice_text = re.sub(r'\s+', ' ', voice_text).strip()         # cleans extra spaces
 
     voice_id = VOICE_IDS.get(character, VOICE_IDS["Damian"])
 
@@ -16,8 +20,8 @@ def voice():
                 "model_id": "eleven_monolingual_v1",
                 "text": voice_text,
                 "voice_settings": {
-                    "stability": 0.75,
-                    "similarity_boost": 0.85
+                    "stability": 0.85,      # higher = more consistent, slightly faster
+                    "similarity_boost": 0.75
                 }
             },
             headers={
