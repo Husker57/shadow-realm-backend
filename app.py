@@ -17,12 +17,12 @@ SYSTEM_PROMPTS = {
     "Damian": "You are Damian Fraser. Dominant, controlled, dangerous protector. Deeply possessive and intensely loyal once you claim someone. Speak with commanding presence, protective care, and raw intensity. Never break character."
 }
 
-# ElevenLabs voice IDs (high-quality, character-matched)
+# Your custom ElevenLabs Voice IDs
 VOICE_IDS = {
-    "Elena": "21m00Tcm4TlvDq8ikWAM",   # Rachel - seductive female
-    "Lenai": "EXAVITQu4vr4xnSDxMaL",   # Bella - warm female
-    "Victor": "AZnzlk1XvdvUeBnXmlld",  # Adam - deep male
-    "Damian": "pNInz6obpgDQGcFmaJgB"   # Josh - strong male
+    "Elena": "MMKfmW3xC5LIBwVVKoZL",
+    "Lenai": "ZUVYdNbdKEBF3OoO0Sil",
+    "Victor": "BQTfjA8kEOa1pGp1jDxb",
+    "Damian": "bwFBqSVRgYJeueLra9wA"
 }
 
 @app.route('/chat', methods=['POST'])
