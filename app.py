@@ -6,10 +6,14 @@ def voice():
     character = data.get('character', 'Damian')
     text = data.get('text', '')
 
-    # SUPER aggressive cleaning for ElevenLabs
-    voice_text = re.sub(r'\*.*?\*', '', text, flags=re.DOTALL)   # removes *action*
-    voice_text = re.sub(r'[_*]+', '', voice_text)                # removes any leftover * or _
-    voice_text = re.sub(r'\s+', ' ', voice_text).strip()         # cleans extra spaces
+    # ULTRA aggressive cleaning — removes EVERY *action*, _action_, leftover * or _
+    voice_text = re.sub(r'\*[\s\S]*?\*', '', text)      # removes anything between * and *
+    voice_text = re.sub(r'[_*]+', '', voice_text)       # removes any leftover * or _
+    voice_text = re.sub(r'\s+', ' ', voice_text).strip() # cleans extra spaces
+
+    # Shorten very long responses to reduce latency
+    if len(voice_text) > 220:
+        voice_text = voice_text[:220] + "..."
 
     voice_id = VOICE_IDS.get(character, VOICE_IDS["Damian"])
 
@@ -20,7 +24,7 @@ def voice():
                 "model_id": "eleven_monolingual_v1",
                 "text": voice_text,
                 "voice_settings": {
-                    "stability": 0.85,      # higher = more consistent, slightly faster
+                    "stability": 0.85,
                     "similarity_boost": 0.75
                 }
             },
