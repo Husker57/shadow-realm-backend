@@ -1,6 +1,6 @@
 @app.route('/chat', methods=['POST'])
 def chat():
-    # Use request.form to match the frontend's URLSearchParams
+    # Read form data (this matches what your frontend sends)
     character = request.form.get('character', 'Damian')
     message = request.form.get('message', '')
     history_str = request.form.get('history', '[]')
