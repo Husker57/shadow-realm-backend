@@ -1,31 +1,15 @@
-from flask import Flask, request, jsonify, Response
-from flask_cors import CORS
-from anthropic import Anthropic
-import os
-import re
-
-app = Flask(__name__)
-CORS(app)   # ← This fixes the "connection issue"
-
-client = Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
-
-VOICE_IDS = {
-    "Lenai": "ZUVYdNbdKEBF3OoO0Sil",
-    "Elena": "MMKfmW3xC5LIBwVVKoZL",
-    "Victor": "BQTfjA8kEOa1pGp1jDxb",
-    "Damian": "bwFBqSVRgYJeueLra9wA"
-}
-
-@app.route('/')
-def home():
-    return "Backend is running - ready for /chat and /voice"
-
 @app.route('/chat', methods=['POST'])
 def chat():
-    data = request.json
-    character = data.get('character', 'Damian')
-    message = data.get('message', '')
-    history = data.get('history', [])
+    # Use request.form to match the frontend's URLSearchParams
+    character = request.form.get('character', 'Damian')
+    message = request.form.get('message', '')
+    history_str = request.form.get('history', '[]')
+
+    import json
+    try:
+        history = json.loads(history_str)
+    except:
+        history = []
 
     SYSTEM_PROMPTS = {
         "Lenai": "You are Lenai Devereaux from Shadows of Seduction. Emotionally strong but vulnerable underneath. Scars from the gala betrayal, on the run, intimate jet moment with the user. Speak warmly, vulnerably, with longing and gentle flirtation. ALWAYS respond in this exact JSON format and nothing else: {\"dialogue\": \"your spoken words here\"}. Never use asterisks, stars, *action*, italics, bold, markdown, or any formatting. Never describe actions in *...*. Just speak as a real person would. Never break character.",
