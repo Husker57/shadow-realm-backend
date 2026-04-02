@@ -1,6 +1,28 @@
+from flask import Flask, request, jsonify, Response
+from flask_cors import CORS
+from anthropic import Anthropic
+import os
+import re
+
+app = Flask(__name__)
+CORS(app)  # This fixes connection issues
+
+client = Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
+
+VOICE_IDS = {
+    "Lenai": "ZUVYdNbdKEBF3OoO0Sil",
+    "Elena": "MMKfmW3xC5LIBwVVKoZL",
+    "Victor": "BQTfjA8kEOa1pGp1jDxb",
+    "Damian": "bwFBqSVRgYJeueLra9wA"
+}
+
+@app.route('/')
+def home():
+    return "Backend is running - ready for /chat and /voice"
+
 @app.route('/chat', methods=['POST'])
 def chat():
-    # Read form data (this matches what your frontend sends)
+    # Use request.form because frontend sends form data
     character = request.form.get('character', 'Damian')
     message = request.form.get('message', '')
     history_str = request.form.get('history', '[]')
