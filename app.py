@@ -67,14 +67,17 @@ def chat():
 
 @app.route('/voice', methods=['POST'])
 def voice():
-    data = request.json
-    character = data.get('character', 'Damian')
-    text = data.get('text', '')
+    character = request.form.get('character', 'Damian')
+    text = request.form.get('text', '')
+
+    print(f"ORIGINAL TEXT FROM CLAUDE: {repr(text)}")
 
     voice_text = re.sub(r'\*[^*]*\*', '', text)
     voice_text = re.sub(r'[_*]+', '', voice_text)
     voice_text = re.sub(r'\s+', ' ', voice_text).strip()
     voice_text = voice_text.replace('asterisk', '').replace('Asterisk', '')
+
+    print(f"FINAL CLEANED TEXT SENT TO ELEVENLABS: {repr(voice_text)}")
 
     if len(voice_text) > 150:
         voice_text = voice_text[:150] + "..."
@@ -99,7 +102,3 @@ def voice():
         return Response(response.content, mimetype="audio/mpeg")
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
