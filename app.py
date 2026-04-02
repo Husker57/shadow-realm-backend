@@ -67,19 +67,10 @@ def chat():
 
 @app.route('/voice', methods=['POST'])
 def voice():
-    # Log what we receive (this is what ElevenLabs suggested)
-    print(f"Content-Type: {request.content_type}")
-    print(f"Form data: {dict(request.form)}")
-    
     character = request.form.get('character', 'Damian')
     text = request.form.get('text', '')
-    
-    print(f"Character: {character}")
+
     print(f"ORIGINAL TEXT FROM CLAUDE: {repr(text)}")
-    
-    if not text:
-        print("ERROR: No text provided")
-        return jsonify({"error": "No text provided"}), 400
 
     voice_text = re.sub(r'\*[^*]*\*', '', text)
     voice_text = re.sub(r'[_*]+', '', voice_text)
@@ -92,7 +83,6 @@ def voice():
         voice_text = voice_text[:150] + "..."
 
     voice_id = VOICE_IDS.get(character, VOICE_IDS["Damian"])
-    print(f"Using voice_id: {voice_id}")
 
     try:
         response = requests.post(
@@ -108,14 +98,8 @@ def voice():
                 "xi-api-key": os.getenv("ELEVENLABS_API_KEY")
             }
         )
-        
-        print(f"ElevenLabs status code: {response.status_code}")
-        if response.status_code != 200:
-            print(f"ElevenLabs error response: {response.text}")
-        
         response.raise_for_status()
         return Response(response.content, mimetype="audio/mpeg")
-        
     except Exception as e:
         print(f"VOICE ERROR: {str(e)}")
         return jsonify({"error": str(e)}), 500
