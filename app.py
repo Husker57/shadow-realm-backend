@@ -73,15 +73,13 @@ def voice():
 
     print(f"ORIGINAL TEXT FROM CLAUDE: {repr(text)}")
 
+    # Nuclear cleaning (no truncation)
     voice_text = re.sub(r'\*[^*]*\*', '', text)
     voice_text = re.sub(r'[_*]+', '', voice_text)
     voice_text = re.sub(r'\s+', ' ', voice_text).strip()
     voice_text = voice_text.replace('asterisk', '').replace('Asterisk', '')
 
     print(f"FINAL CLEANED TEXT SENT TO ELEVENLABS: {repr(voice_text)}")
-
-    if len(voice_text) > 150:
-        voice_text = voice_text[:150] + "..."
 
     voice_id = VOICE_IDS.get(character, VOICE_IDS["Damian"])
 
@@ -90,7 +88,7 @@ def voice():
             f"https://api.elevenlabs.io/v1/text-to-speech/{voice_id}",
             json={
                 "model_id": "eleven_flash_v2_5",
-                "text": voice_text,
+                "text": voice_text,          # full text, no truncation
                 "voice_settings": {"stability": 0.5, "similarity_boost": 0.75},
                 "optimize_streaming_latency": 4
             },
@@ -104,7 +102,3 @@ def voice():
     except Exception as e:
         print(f"VOICE ERROR: {str(e)}")
         return jsonify({"error": str(e)}), 500
-
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
