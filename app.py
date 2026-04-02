@@ -1,9 +1,12 @@
 from flask import Flask, request, jsonify, Response
+from flask_cors import CORS
 from anthropic import Anthropic
 import os
 import re
 
 app = Flask(__name__)
+CORS(app)  # ← This fixes the connection issue
+
 client = Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
 
 VOICE_IDS = {
@@ -13,7 +16,6 @@ VOICE_IDS = {
     "Damian": "bwFBqSVRgYJeueLra9wA"
 }
 
-# Health check - so you can see the backend is alive
 @app.route('/')
 def home():
     return "Backend is running - ready for /chat and /voice"
@@ -75,23 +77,4 @@ def voice():
 
     try:
         response = requests.post(
-            f"https://api.elevenlabs.io/v1/text-to-speech/{voice_id}",
-            json={
-                "model_id": "eleven_flash_v2_5",
-                "text": voice_text,
-                "voice_settings": {"stability": 0.5, "similarity_boost": 0.75},
-                "optimize_streaming_latency": 4
-            },
-            headers={
-                "Accept": "audio/mpeg",
-                "xi-api-key": os.getenv("ELEVENLABS_API_KEY")
-            }
-        )
-        response.raise_for_status()
-        return Response(response.content, mimetype="audio/mpeg")
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+            f"https://api.elevenlabs.io/v1/text-to-speech/{voice_id
