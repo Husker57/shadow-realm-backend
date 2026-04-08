@@ -5,6 +5,7 @@ import json
 from datetime import datetime
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
+import traceback
 
 app = Flask(__name__)
 CORS(app)
@@ -12,16 +13,17 @@ CORS(app)
 SHEET_ID = "1HnXo9q-1MGIzvr3JV1ZWbcD7vCVBogEX8tz5ncs1vXQ"
 
 def get_sheet():
-    print("🔄 Attempting to connect to Google Sheet...")
+    print("🔄 Trying to connect to Google Sheet...")
     creds_json = os.getenv("GOOGLE_CREDENTIALS")
     if not creds_json:
-        print("❌ GOOGLE_CREDENTIALS environment variable is missing")
+        print("❌ GOOGLE_CREDENTIALS is missing from environment variables")
         return None
     try:
         creds_dict = json.loads(creds_json)
-        print("✅ JSON credentials loaded successfully")
+        print("✅ JSON credentials parsed successfully")
     except Exception as e:
-        print(f"❌ Failed to parse JSON credentials: {e}")
+        print(f"❌ Failed to parse JSON: {e}")
+        print(traceback.format_exc())
         return None
     try:
         scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
@@ -31,7 +33,8 @@ def get_sheet():
         print("✅ Successfully connected to Google Sheet")
         return sheet
     except Exception as e:
-        print(f"❌ Failed to authorize or open sheet: {e}")
+        print(f"❌ Sheet connection failed: {e}")
+        print(traceback.format_exc())
         return None
 
 @app.route('/signup', methods=['POST'])
@@ -51,19 +54,20 @@ def signup():
         sheet = get_sheet()
         if sheet:
             sheet.append_row(row)
-            print(f"✅ ROW SUCCESSFULLY ADDED TO GOOGLE SHEET → {row}")
+            print(f"✅ ROW SUCCESSFULLY ADDED → {row}")
         else:
             print("❌ Could not connect to Google Sheet")
 
-        return jsonify({"status": "success", "message": "Subscriber added"}), 200
+        return jsonify({"status": "success"}), 200
 
     except Exception as e:
-        print(f"❌ Signup error: {e}")
-        return jsonify({"status": "error", "message": str(e)}), 500
+        print(f"❌ FULL SIGNUP ERROR:")
+        print(traceback.format_exc())
+        return jsonify({"status": "error"}), 500
 
 @app.route('/', methods=['GET'])
 def home():
-    return "Shadow Realm Backend is running ✅"
+    return "Backend is running ✅"
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
