@@ -14,10 +14,8 @@ def signup():
         name = data.get('name', 'Unknown')
         email = data.get('email', 'no-email')
         timestamp = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')
-
-        print(f"✅ RECEIVED → {timestamp} | Name: {name} | Email: {email} | Tier: {tier}")
-
-        return jsonify({"status": "success", "message": "Data received"}), 200
+        print(f"✅ RECEIVED → {timestamp} | {name} | {email} | Tier: {tier}")
+        return jsonify({"status": "success"}), 200
     except Exception as e:
         print(f"❌ ERROR: {e}")
         return jsonify({"status": "error"}), 500
