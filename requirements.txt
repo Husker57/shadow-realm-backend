@@ -1,5 +1,4 @@
 flask
 flask-cors
-gspread
-oauth2client
+supabase
 gunicorn
