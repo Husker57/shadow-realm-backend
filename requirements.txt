@@ -1,6 +1,4 @@
 flask
-anthropic
-python-dotenv
-gunicorn
 flask-cors
-requests
+gspread
+oauth2client
