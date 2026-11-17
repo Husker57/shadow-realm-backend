@@ -1,0 +1,12 @@
+# Secrets: set these in the host (Render) environment, never in the repo
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
